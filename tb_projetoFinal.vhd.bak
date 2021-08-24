@@ -1,0 +1,79 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use std.textio.all
+
+entity tb_projetoFinal is
+end tb_projetoFinal;
+
+architecture tb_gestao_vacinas of tb_projetoFinal is
+	component vacinas port(
+		start: in boolean;
+		temp_1, temp_2, temp_3, temp_4, temp_5: in std_logic_vector(15 downto 0);
+		sensor_1 , sensor_2 , sensor_3, sensor_4, sensor_5: in boolean;
+		led_1, led_2, led_3, led_4, led_5: out std_logic;
+	);
+	end component;
+	
+	
+	
+	-- declarações signal
+	signal clk: std_logic;
+	signal read_vacinas: std_logic := '0';
+	signal vacinas_data: std_logic_vector() --definir qnt de bits para leitura
+	
+	
+	
+	-- declarações constant
+	constant PERIOD     : time := 20 ns;
+   constant DUTY_CYCLE : real := 0.5;
+   constant OFFSET     : time := 5 ns;
+
+	
+	
+	-- declarações variable
+	variable linha : line;
+	variable input : std_logic_vector(3 downto 0); --definir qnt de bits para leitura
+	
+	
+	
+	-- clock process
+	process    
+		begin
+      wait for OFFSET;
+      clock_loop : LOOP
+			clk <= '0';
+         wait for (PERIOD - (PERIOD * DUTY_CYCLE));
+				clk <= '1';
+            wait for (PERIOD * DUTY_CYCLE);
+		end loop clock_loop;
+	end process;
+	
+	
+	file vacinas: text open read_mode is "vacina.txt";
+	file relatorio: text open write_mode is "relatorio.txt";
+	
+	--ler dados vacina.txt
+	read_vacinas_process: process
+	begin
+		wait until(falling_edge(clk));
+		while(not endfile(vacinas)) loop
+			if read_vacinas = '1' then	--verificar necessidade de condição
+				readline(vacinas, linha);
+				read(linha, input);
+				vacinas_data <= input;
+			  end if;
+			  wait for PERIOD;
+		end loop;
+		wait;
+	end process read_vacinas_process;	
+	
+	
+	-- condições
+	
+	
+	
+	
+	
+	
+end tb_gestao_vacinas
