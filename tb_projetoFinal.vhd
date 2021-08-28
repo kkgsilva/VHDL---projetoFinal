@@ -17,7 +17,6 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	);
 	end component;
 	
-	
 -- declaraçoes de  signal
 
 	type vect is array (1 to 5) of integer; --O indice do array é o numero do refrigerador 
@@ -25,10 +24,10 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	signal mensagem: vect;
 	signal clk: std_logic;
 	signal read_vacinas: std_logic := '0';
-	signal lote_data: string;
+	signal lote_data: string(5 downto 1);
 	signal refrigerador_data: integer;
 	signal flag_write   : std_logic := '0';
-	signal start: integer;
+	signal start: std_logic := '0';
 	signal vacinas_output      : std_logic_vector(7 downto 0);
 	signal porta_1 : boolean;
 	signal temperatura_1 : std_logic_vector(15 downto 0);
@@ -41,7 +40,7 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	constant max_value      : natural := 15;
 	constant mim_value		: natural := 0;
 
-	-- declaraÃ§Ãµes file
+	-- declaracoes file
 	file vacinas			: text open read_mode is "vacina.txt";
 	file refrigerador_1	: text open write_mode is "refrigerador_1.txt";
 	file refrigerador_2	: text open write_mode is "refrigerador_2.txt";
@@ -69,8 +68,8 @@ begin
 	--leitura dos dados vacina.txt
 leitura_vacinas_process: process
 	variable linha : line;
-	variable nomeVacina : string;
-	variable loteVacina : string;
+	variable nomeVacina : string(6 downto 1);
+	variable loteVacina : string(5 downto 1);
 	variable numeroRefrigerador : integer;
 	variable espaco 	  : character;
 	variable input : std_logic_vector(3 downto 0);
@@ -79,7 +78,7 @@ leitura_vacinas_process: process
 	begin
 		wait until(falling_edge(clk));
 		while(not endfile(vacinas)) loop
-			if (start = 1) then
+			if (start = '1') then
 				readline(vacinas, linha);
 				read(linha,nomeVacina);		
 				
@@ -109,14 +108,15 @@ leitura_vacinas_process: process
 	gera_estimulos_entrada_process: process
    begin
 		wait for(OFFSET + 3*PERIOD);
-            start <= 1;		
+            start <= '1';		
 			for i in mim_value to max_value loop
 				wait for PERIOD;
 		   end loop;
-            start <= 0;		
+            start <= '0';		
 		wait;
 end process gera_estimulos_entrada_process;	
    	
+   
 
 	-- gera estimulos de saida
 gera_estimulos_saida_process: process
@@ -129,7 +129,6 @@ gera_estimulos_saida_process: process
          flag_write <= '0';			
 		 wait;
 end process gera_estimulos_saida_process;   
-   
 	
 	
 	
@@ -153,12 +152,12 @@ end process escreve_relatorio;
 		variable linha  : line;
 		variable saida : integer;
 		constant espaco: string := "  ";
-		constant mensagem1: "Refrigerador funcionando";
-		constant msg_porta_alerta: "ALERTA: Porta do refrigerador aberta!";
-		constant msg_temp_alta: "VACINAS DESCARTADAS: Temperatura acima da permitida!";
-		constant msg_temp_baixa: "VACINAS DESCARTADAS: Temperatura abaixo da permitida!";
-		constant msg_temp_subindo: "ALERTA: Temperatura a temperatura esta subindo!";
-		constant msg_temp_caindo: "ALERTA: Temperatura a temperatura esta caindo!";
+		constant mensagem1: string := "Refrigerador funcionando";
+		constant msg_porta_alerta: string :="ALERTA: Porta do refrigerador aberta!";
+		constant msg_temp_alta: string :="VACINAS DESCARTADAS: Temperatura acima da permitida!";
+		constant msg_temp_baixa: string :="VACINAS DESCARTADAS: Temperatura abaixo da permitida!";
+		constant msg_temp_subindo: string :="ALERTA: Temperatura a temperatura esta subindo!";
+		constant msg_temp_caindo: string := "ALERTA: Temperatura a temperatura esta caindo!";
 
 	begin
 		wait until (falling_edge(clk));
@@ -166,16 +165,34 @@ end process escreve_relatorio;
 			saida := mensagem(1);
 			if(saida = 1) then
 				write(linha, mensagem1);
+			elsif(saida = 2) then
+				write(linha, msg_porta_alerta);
+			elsif(saida = 3) then
+				write(linha, msg_temp_alta);
+			elsif(saida = 4) then
+				write(linha, msg_temp_baixa);
+			elsif(saida = 5) then
+				write(linha, msg_temp_subindo);
+			elsif(saida = 6) then
+				write(linha, msg_temp_caindo);
+			end if;
+			
 				write(linha,espaco);
 				write(linha,temperatura_1);
 				write(linha,espaco);
 				write(linha,porta_1);
 				writeline(refrigerador_1,linha);
 				
-			end if;
 		wait;
 		end loop; 
 	end process escrita_vacina_outputs; 
 	
+	
+	
+		
+		
+		instancia_vacina: vacina port map (temp_1=>temperatura_1, sensor_1 => porta_1);
+		temperatura_1 <= "0000000000000100", "0000000000000010" after 10 ns, "0000000000000011" after 20 ns, "0000000000000111" after 30 ns, "0000000000000010" after 40ns, "0000000000000010" after 50ns, "0000000000000001" after 60ns;
+		porta_1 <= false, true after 15 ns, false after 5 ns, true after 30 ns, false after 20 ns, true after 50 ns;
 	
 end tb_gestao_vacinas;
