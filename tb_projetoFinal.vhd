@@ -10,26 +10,28 @@ end tb_projetoFinal;
 
 architecture tb_gestao_vacinas of tb_projetoFinal is
 	component vacina port(
-		start: in boolean;
-		temp_1, temp_2, temp_3, temp_4, temp_5: in std_logic_vector(15 downto 0);
-		sensor_1 , sensor_2 , sensor_3, sensor_4, sensor_5: in boolean;
-		led_1, led_2, led_3, led_4, led_5: out std_logic
+		start: in integer:= 0;
+		temp_1: in std_logic_vector(15 downto 0);
+		sensor_1: in boolean;
+		led_1: out std_logic
 	);
 	end component;
 	
 	
 -- declaraçoes de  signal
 
-	type vect is array (0 to 4) of integer; --O indice do array é o numero do refrigerador 
-	signal exp_output: vect;
+	type vect is array (1 to 5) of integer; --O indice do array é o numero do refrigerador 
+	signal vacinas_data: vect;
+	signal mensagem: vect;
 	signal clk: std_logic;
 	signal read_vacinas: std_logic := '0';
-	signal vacinas_data: string;
 	signal lote_data: string;
-	signal refrigerador_data: string;
+	signal refrigerador_data: integer;
 	signal flag_write   : std_logic := '0';
-	signal start: std_logic;
+	signal start: integer;
 	signal vacinas_output      : std_logic_vector(7 downto 0);
+	signal porta_1 : boolean;
+	signal temperatura_1 : std_logic_vector(15 downto 0);
 
 	
 	-- declaraçoes constant
@@ -46,7 +48,11 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	file refrigerador_3	: text open write_mode is "refrigerador_3.txt";
 	
 		------------------------------ PORT MAP ---------------------------------------
-	begin
+begin
+	DUT: vacina
+    port map(temp_1      	=> temperatura_1,
+             sensor_1       => porta_1);
+				 
 	-- clock process
 	PROCESS    -- clock process for clock
         BEGIN
@@ -60,15 +66,12 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
         END PROCESS;
 	
 
-	
-	
 	--leitura dos dados vacina.txt
-	
 leitura_vacinas_process: process
 	variable linha : line;
 	variable nomeVacina : string;
 	variable loteVacina : string;
-	variable numeroRefrigerador : string;
+	variable numeroRefrigerador : integer;
 	variable espaco 	  : character;
 	variable input : std_logic_vector(3 downto 0);
 	
@@ -76,12 +79,10 @@ leitura_vacinas_process: process
 	begin
 		wait until(falling_edge(clk));
 		while(not endfile(vacinas)) loop
+			if (start = 1) then
 				readline(vacinas, linha);
 				read(linha,nomeVacina);		
-				if(nomeVacina = "Pfizer") then
-					exp_output(0) <= 1; 
-				else 
-					exp_output(0) <= 2;
+				
 				read(linha, espaco);
 				
 				read(linha,loteVacina);
@@ -91,25 +92,31 @@ leitura_vacinas_process: process
 				
 				read(linha, numeroRefrigerador);
 				refrigerador_data <= numeroRefrigerador;
-			  end if;			  
+				
+				if(nomeVacina = "Pfizer") then
+					vacinas_data(numeroRefrigerador) <= 1; 
+				else 
+					vacinas_data(numeroRefrigerador) <= 2;
+				end if;		
+			end if;
 		end loop;
 		wait;
 	end process leitura_vacinas_process;	
+	
+	
 	
 	-- gera estimulos de entrada
 	gera_estimulos_entrada_process: process
    begin
 		wait for(OFFSET + 3*PERIOD);
-            start <= '1';		
+            start <= 1;		
 			for i in mim_value to max_value loop
 				wait for PERIOD;
 		   end loop;
-            start <= '0';		
+            start <= 0;		
 		wait;
 end process gera_estimulos_entrada_process;	
-   
-	
-	
+   	
 
 	-- gera estimulos de saida
 gera_estimulos_saida_process: process
@@ -141,5 +148,34 @@ escreve_relatorio: process
 			 wait for PERIOD;
 		 end loop; 
 end process escreve_relatorio;   
+	-- escrita do relatorio 
+	escrita_vacina_outputs:process
+		variable linha  : line;
+		variable saida : integer;
+		constant espaco: string := "  ";
+		constant mensagem1: "Refrigerador funcionando";
+		constant msg_porta_alerta: "ALERTA: Porta do refrigerador aberta!";
+		constant msg_temp_alta: "VACINAS DESCARTADAS: Temperatura acima da permitida!";
+		constant msg_temp_baixa: "VACINAS DESCARTADAS: Temperatura abaixo da permitida!";
+		constant msg_temp_subindo: "ALERTA: Temperatura a temperatura esta subindo!";
+		constant msg_temp_caindo: "ALERTA: Temperatura a temperatura esta caindo!";
+
+	begin
+		wait until (falling_edge(clk));
+		while true loop
+			saida := mensagem(1);
+			if(saida = 1) then
+				write(linha, mensagem1);
+				write(linha,espaco);
+				write(linha,temperatura_1);
+				write(linha,espaco);
+				write(linha,porta_1);
+				writeline(refrigerador_1,linha);
+				
+			end if;
+		wait;
+		end loop; 
+	end process escrita_vacina_outputs; 
+	
 	
 end tb_gestao_vacinas;
