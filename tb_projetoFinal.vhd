@@ -12,17 +12,17 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	component vacina port(
 		clock: in std_logic;
 		temp_1: in std_logic_vector(15 downto 0);
-		sensor_1: in boolean;
+		sensor_1: in std_logic;
 		led_1: out std_logic_vector(23 downto 0);
-		mensagem: out integer
+		mensagem: out integer;
+		vacinas_data: in std_logic
 	);
 	end component;
 	
    -- declaraçoes de  signal ine out
-	type vect is array (1 to 5) of integer; 
-	signal vacinas_data: vect; --O indice do array é o numero do refrigerador  [[[[[[verificar]]]]]]
-	signal porta_1 : boolean;
-	signal temperatura_1 : std_logic_vector(15 downto 0);
+	signal tipoVacina : std_logic;
+	signal porta_1 : std_logic:= '0';
+	signal temperatura_1 : std_logic_vector(15 downto 0) := "1111111110110101";
 	signal alerta_1 : std_logic_vector(23 downto 0);
 	signal notificacao: integer;
 	
@@ -43,8 +43,8 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	file refrigerador_1	: text open write_mode is "refrigerador_1.txt";
 	
 	--declaracoes de sinal utilizados entre process
-	signal  loteVacina : string(5 downto 1);
-	signal numeroRefrigerador : integer;
+	signal  loteVacina : string(4 downto 1);
+	signal numeroRefrigerador : unsigned(1 downto 1);
 	
 		------------------------------ PORT MAP ---------------------------------------
 begin
@@ -53,14 +53,15 @@ begin
 				 temp_1    => temperatura_1,
 				 led_1    => alerta_1,
              sensor_1  => porta_1,
-				 mensagem => notificacao);
+				 mensagem => notificacao,
+				 vacinas_data => tipoVacina );
 				 
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar o sinal de clock 
 ------------------------------------------------------------------------------------		
         PROCESS    -- clock process for clock
         BEGIN
-            WAIT for OFFSET;
+            WAIT for  1 ns;
             CLOCK_LOOP : LOOP
                 clk <= '0';
                 WAIT FOR (PERIOD - (PERIOD * DUTY_CYCLE));
@@ -77,8 +78,8 @@ begin
 leitura_vacinas_process: process
 	variable linha : line;
 	variable nomeVacina : string(6 downto 1);
-	variable loteVacina : string(5 downto 1);
-	variable numeroRefrigerador : integer;
+	variable lote : string(4 downto 1);
+	variable refri : integer;
 	variable espaco 	  : character;
 	
 	
@@ -89,18 +90,21 @@ leitura_vacinas_process: process
 				readline(vacinas, linha);
 				read(linha,nomeVacina);		
 				read(linha, espaco);
-				read(linha,loteVacina);
+				read(linha,lote);
+				loteVacina <= lote;
 				read(linha, espaco);
-				read(linha, numeroRefrigerador);
+				read(linha, refri);
+				numeroRefrigerador <=  to_unsigned(refri, numeroRefrigerador'length);
+				
 		   report "A vacina lida - " & nomeVacina;
 			report "O lote -" & loteVacina;
-			report "No refrigerador - " & integer'image(numeroRefrigerador);
+			report "No refrigerador - " & integer'image(to_integer(numeroRefrigerador));
 				if(nomeVacina = "Pfizer") then
-					vacinas_data(numeroRefrigerador) <= 1; 
+					tipoVacina <= '1';
 				else 
-					vacinas_data(numeroRefrigerador) <= 0;
+					tipoVacina <= '0';
 				end if;	
-			report "A vacina lida - " & nomeVacina;	
+			report "Vacina 1  - " & std_logic'image(tipoVacina);	
 			end if;
 			wait for PERIOD;
 		end loop;
@@ -127,7 +131,7 @@ leitura_vacinas_process: process
 ------------------------------------------------------------------------------------ 
  escreve_outputs : PROCESS
     BEGIN
-         WAIT FOR (OFFSET + 4*PERIOD);
+         WAIT FOR (OFFSET);
              flag_write <= '1';
 			 for i in mim_value to max_value loop
 		         wait for PERIOD;
@@ -154,7 +158,8 @@ leitura_vacinas_process: process
 	begin
 		wait until (falling_edge(clk));
 		while true loop
-			write(linha,numeroRefrigerador);
+		
+			write(linha,to_integer(numeroRefrigerador));
 			write(linha,espaco);
 			
 			saida := notificacao;
@@ -183,10 +188,5 @@ leitura_vacinas_process: process
 		wait;
 		end loop; 
 	end process escrita_vacina_outputs; 
-	
-		
-		
-		--temperatura_1 <= "0000000000000100", "0000000000000010" after 10 ns, "0000000000000011" after 20 ns, "0000000000000111" after 30 ns, "0000000000000010" after 40ns, "0000000000000010" after 50ns, "0000000000000001" after 60ns;
-		--porta_1 <= false, true after 15 ns, false after 5 ns, true after 30 ns, false after 20 ns, true after 50 ns;
 	
 end tb_gestao_vacinas;
