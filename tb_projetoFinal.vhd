@@ -26,6 +26,8 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	signal alerta_1 : std_logic_vector(23 downto 0);
 	signal notificacao: integer;
 	
+	
+	
 	--SINAIS DE LEITURA E ESCRITA
 	signal read_data_in    : std_logic:='0';
    signal flag_write      : std_logic:='0';   
@@ -61,7 +63,7 @@ begin
 ------------------------------------------------------------------------------------		
         PROCESS    -- clock process for clock
         BEGIN
-            WAIT for  1 ns;
+            WAIT for OFFSET;
             CLOCK_LOOP : LOOP
                 clk <= '0';
                 WAIT FOR (PERIOD - (PERIOD * DUTY_CYCLE));
@@ -117,7 +119,7 @@ leitura_vacinas_process: process
 ------------------------------------------------------------------------------------
    tb_stimulus : PROCESS
    BEGIN
-        WAIT FOR (OFFSET);
+        WAIT FOR (OFFSET + 3*PERIOD);
             read_data_in <= '1';		
 			for i in mim_value to max_value loop
 		        wait for PERIOD;
@@ -131,7 +133,7 @@ leitura_vacinas_process: process
 ------------------------------------------------------------------------------------ 
  escreve_outputs : PROCESS
     BEGIN
-         WAIT FOR (OFFSET);
+         WAIT FOR (OFFSET + 4*PERIOD);
              flag_write <= '1';
 			 for i in mim_value to max_value loop
 		         wait for PERIOD;
@@ -185,7 +187,7 @@ leitura_vacinas_process: process
 				write(linha,porta_1);
 				writeline(refrigerador_1,linha);
 				
-		wait;
+		wait for PERIOD;
 		end loop; 
 	end process escrita_vacina_outputs; 
 	

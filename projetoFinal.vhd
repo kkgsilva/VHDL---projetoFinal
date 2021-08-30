@@ -27,21 +27,22 @@ begin
 	
 		begin
 				if (vacinas_data = '1') then
-					padrao_temp_1 <= "1111111110110101";	-- revisar complemento de 2/sinal e magnitude
 					report"entrou aqui";
+					padrao_temp_1 <= "1111111110110101";	-- revisar complemento de 2/sinal e magnitude
 					padrao_temp_1_max <= padrao_temp_1;
 					padrao_temp_1_min <= padrao_temp_1;
 				else
 					padrao_temp_1 <= "0000000000000101";
-					report"entrou aqui";
 					padrao_temp_1_max <= "0000000000001000";
 					padrao_temp_1_min <= "0000000000000010";
 				end if;
 	end process;
 	
+	
 comparadores_process: process(padrao_temp_1,padrao_temp_1_max,padrao_temp_1_min)
 	begin 
 	if (clock='1' and clock'event) then
+	
 		if ((unsigned(temp_1)) = (unsigned(padrao_temp_1)) AND (sensor_1 = '0')) then		-- temperatura ok, porta fechada
 				led_1 <= x"00ff00";	-- led verde				
 				mensagem <= 1;
@@ -66,6 +67,7 @@ comparadores_process: process(padrao_temp_1,padrao_temp_1_max,padrao_temp_1_min)
 			led_1 <= x"ffff00";	-- led amarelo
 			mensagem <= 6;
 		end if;
+		
 	end if;
 end process comparadores_process;	
 
