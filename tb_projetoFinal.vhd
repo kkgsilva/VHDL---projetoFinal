@@ -12,19 +12,20 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	component vacina port(
 		clock: in std_logic;
 		temp_1: in std_logic_vector(15 downto 0);
+		vacinas_data: in std_logic;
 		sensor_1: in std_logic;
 		led_1: out std_logic_vector(23 downto 0);
-		mensagem: out integer;
-		vacinas_data: in std_logic
+		mensagem: out std_logic_vector(2 downto 0)
+		
 	);
 	end component;
 	
    -- declaraçoes de  signal ine out
-	signal tipoVacina : std_logic;
+	signal tipoVacina : std_logic:='1';
 	signal porta_1 : std_logic:= '0';
 	signal temperatura_1 : std_logic_vector(15 downto 0) := "1111111110110101";
 	signal alerta_1 : std_logic_vector(23 downto 0);
-	signal notificacao: integer;
+	signal notificacao: std_logic_vector(2 downto 0);
 	
 	
 	
@@ -51,12 +52,15 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 		------------------------------ PORT MAP ---------------------------------------
 begin
 	DUT: vacina
-    port map(clock     => clk,
+    port map(
+	 			 vacinas_data => tipoVacina,
+				clock     => clk,
 				 temp_1    => temperatura_1,
 				 led_1    => alerta_1,
              sensor_1  => porta_1,
-				 mensagem => notificacao,
-				 vacinas_data => tipoVacina );
+				 mensagem => notificacao
+				 
+				 );
 				 
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar o sinal de clock 
@@ -86,7 +90,8 @@ leitura_vacinas_process: process
 	
 	
 	begin
-		wait until(falling_edge(clk));
+		--wait until(falling_edge(clk));
+		wait for 86 ns;
 		while(not endfile(vacinas)) loop
 			if (read_data_in = '1' ) then
 				readline(vacinas, linha);
@@ -98,19 +103,21 @@ leitura_vacinas_process: process
 				read(linha, refri);
 				numeroRefrigerador <=  to_unsigned(refri, numeroRefrigerador'length);
 				
-		   report "A vacina lida - " & nomeVacina;
-			report "O lote -" & loteVacina;
-			report "No refrigerador - " & integer'image(to_integer(numeroRefrigerador));
+		  
 				if(nomeVacina = "Pfizer") then
 					tipoVacina <= '1';
 				else 
 					tipoVacina <= '0';
 				end if;	
-			report "Vacina 1  - " & std_logic'image(tipoVacina);	
 			end if;
 			wait for PERIOD;
 		end loop;
 		wait;
+			--report "A vacina lida - " & nomeVacina;
+			--report "O lote -" & loteVacina;
+			--report "No refrigerador - " & integer'image(to_integer(numeroRefrigerador));
+			--report "Vacina 1  - " & std_logic'image(tipoVacina);	
+
 	end process leitura_vacinas_process;	
 	
 	
@@ -148,7 +155,7 @@ leitura_vacinas_process: process
 
 	escrita_vacina_outputs:process
 		variable linha  : line;
-		variable saida : integer;
+		variable saida : std_logic_vector(2 downto 0);
 		constant espaco: string := "  ";
 		constant mensagem1: string := "Refrigerador funcionando";
 		constant msg_porta_alerta: string :="ALERTA: Porta do refrigerador aberta!";
@@ -165,17 +172,17 @@ leitura_vacinas_process: process
 			write(linha,espaco);
 			
 			saida := notificacao;
-			if(saida = 1) then
+			if(saida = "001") then
 				write(linha, mensagem1);
-			elsif(saida = 2) then
+			elsif(saida = "010") then
 				write(linha, msg_porta_alerta);
-			elsif(saida = 3) then
+			elsif(saida = "011") then
 				write(linha, msg_temp_alta);
-			elsif(saida = 4) then
+			elsif(saida = "100") then
 				write(linha, msg_temp_baixa);
-			elsif(saida = 5) then
+			elsif(saida = "101") then
 				write(linha, msg_temp_subindo);
-			elsif(saida = 6) then
+			elsif(saida = "110") then
 				write(linha, msg_temp_caindo);
 			end if;
 			
