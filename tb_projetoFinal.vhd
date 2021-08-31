@@ -22,7 +22,7 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
    -- declaraÃ§oes de  signal in e out
 	signal tipoVacina_1, tipoVacina_2, tipoVacina_3, tipoVacina_4, tipoVacina_5  : std_logic;
 	signal porta_1, porta_2, porta_3, porta_4, porta_5 : std_logic:= '0';
-	signal temperatura_1, temperatura_2, temperatura_3, temperatura_4, temperatura_5 : std_logic_vector(15 downto 0) := "1111111110110101";
+	signal temperatura_1, temperatura_2, temperatura_3, temperatura_4, temperatura_5 : std_logic_vector(15 downto 0) := "0000000000000000";
 	signal alerta_1, alerta_2, alerta_3, alerta_4, alerta_5: std_logic_vector(23 downto 0);
 	signal notificacao_1, notificacao_2, notificacao_3, notificacao_4, notificacao_5: std_logic_vector(2 downto 0);
 	
@@ -65,8 +65,8 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	constant msg_porta_alerta: string :="          ALERTA: Porta do refrigerador aberta!         ";
 	constant msg_temp_alta: string    :="  VACINAS DESCARTADAS: Temperatura acima da permitida!  ";
 	constant msg_temp_baixa: string   :="  VACINAS DESCARTADAS: Temperatura abaixo da permitida! ";
-	constant msg_temp_subindo: string :="     ALERTA: Temperatura a temperatura esta subindo!     ";
-	constant msg_temp_caindo: string  :="      ALERTA: Temperatura a temperatura esta caindo!     ";	
+	constant msg_temp_subindo: string :="     ALERTA: Temperatura a temperatura esta subindo!    ";
+	constant msg_temp_caindo: string  :="      ALERTA: Temperatura a temperatura esta caindo!    ";	
 	
 		------------------------------ PORT MAP ---------------------------------------
 begin
@@ -100,8 +100,20 @@ begin
 			);	
 				 
 
-	temperatura_1 <= "1111111110110101", "1111111110110110" after 320 ns, "1111111110110101" after 380 ns, "1111111110110100" after 430 ns, "1111111110110101" after 470 ns;
-	porta_1 <= '0', '1'  after 300 ns, '0' after 370 ns, '1' after 490 ns, '0' after 510 ns;
+	temperatura_1 <= "1111111110110101", "1111111110110110" after 300 ns, "1111111110110101" after 400 ns, "1111111110110100" after 500 ns, "1111111110110101" after 600 ns, "1111111110110111" after 700 ns, "1111111110110011" after 800 ns;
+	porta_1       <= '0', '1'  after 200 ns, '0' after 400 ns, '1' after 600 ns, '0' after 800 ns;
+	
+	temperatura_2 <= "0000000000000101", "0000000000000100" after 300 ns, "0000000000000001" after 400 ns, "0000000000000100" after 500 ns, "0000000000001001" after 600 ns, "0000000000000101" after 700 ns, "0000000000000110" after 800 ns, "0000000000000101" after 900 ns;
+	porta_2       <= '0', '1'  after 200 ns, '0' after 400 ns, '1' after 600 ns, '0' after 800 ns;
+	
+	temperatura_3 <= "0000000000000101", "0000000000000100" after 400 ns, "0000000000000001" after 500 ns, "0000000000000100" after 600 ns, "0000000000001001" after 700 ns, "0000000000000101" after 800 ns, "0000000000000111" after 900 ns;
+	porta_3       <= '0', '1'  after 200 ns, '0' after 400 ns, '1' after 600 ns, '0' after 800 ns;
+	
+	temperatura_4 <= "0000000000000101", "0000000000000100" after 500 ns, "0000000000000001" after 600 ns, "0000000000000100" after 700 ns, "0000000000001001" after 800 ns, "0000000000000101" after 900 ns, "0000000000000110" after 1000 ns;
+	porta_4       <= '0', '1' after 400 ns, '1' after 600 ns, '0' after 800 ns;
+	
+	temperatura_5 <= "1111111110110101", "1111111110110110" after 600 ns, "1111111110110011" after 700 ns, "1111111110110101" after 800 ns, "1111111110110100" after 900 ns, "1111111110110101" after 1000 ns, "1111111110110111" after 1100 ns, "1111111110110011" after 1200 ns;
+	porta_5       <= '0', '1'  after 200 ns, '0' after 400 ns, '1' after 600 ns, '0' after 800 ns;
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar o sinal de clock 
 ------------------------------------------------------------------------------------		
@@ -206,7 +218,7 @@ begin
 		variable saida : std_logic_vector(2 downto 0);
 		
 	begin
-	wait for (85 ns);
+	wait for (275 ns);
 		wait until (falling_edge(clk));
 		while true loop
 		
@@ -228,13 +240,17 @@ begin
 				write(linha,espaco);
 				write(linha,vacina_1.Lote);
 				write(linha,espaco);
-				write(linha, temperatura_1);
+				if( tipoVacina_1 = '1') then 
+					write(linha, to_integer(signed(temperatura_1)),right, 8);
+				elsif(tipoVacina_1 = '0') then
+					write(linha, to_integer(unsigned(temperatura_1)),right, 8);
+				end if;
 				write(linha,espaco);
 				write(linha,porta_1);
 				writeline(refrigerador_1,linha);
 				
 		wait for PERIOD;
-		end loop; 
+		end loop;
 	end process escrita_vacina_1_outputs; 
 	
 -- ------------------------------------------------------------------------------------
@@ -245,7 +261,7 @@ begin
 		variable saida : std_logic_vector(2 downto 0);
 		
 	begin
-	wait for (85 ns);
+	wait for (275 ns);
 		wait until (falling_edge(clk));
 		while true loop
 		
@@ -267,7 +283,11 @@ begin
 				write(linha,espaco);
 				write(linha,vacina_2.Lote);
 				write(linha,espaco);
-				write(linha, temperatura_2);
+				if( tipoVacina_2 = '1') then 
+					write(linha, to_integer(signed(temperatura_2)),right, 8);
+				elsif(tipoVacina_2 = '0') then
+					write(linha, to_integer(unsigned(temperatura_2)),right, 8);
+				end if;
 				write(linha,espaco);
 				write(linha,porta_2);
 				writeline(refrigerador_2,linha);
@@ -286,6 +306,7 @@ begin
 		variable saida : std_logic_vector(2 downto 0);
 		
 	begin
+	wait for (275 ns);
 		wait until (falling_edge(clk));
 		while true loop
 		
@@ -307,7 +328,11 @@ begin
 				write(linha,espaco);
 				write(linha,vacina_3.Lote);
 				write(linha,espaco);
-				write(linha, temperatura_3);
+				if( tipoVacina_3 = '1') then 
+					write(linha, to_integer(signed(temperatura_3)),right, 8);
+				elsif(tipoVacina_3 = '0') then
+					write(linha, to_integer(unsigned(temperatura_3)),right, 8);
+				end if;
 				write(linha,espaco);
 				write(linha,porta_1);
 				writeline(refrigerador_3,linha);
@@ -324,6 +349,7 @@ begin
 		variable saida : std_logic_vector(2 downto 0);
 		
 	begin
+	wait for (275 ns);
 		wait until (falling_edge(clk));
 		while true loop
 		
@@ -345,7 +371,11 @@ begin
 				write(linha,espaco);
 				write(linha,vacina_4.Lote);
 				write(linha,espaco);
-				write(linha, temperatura_4);
+				if( tipoVacina_4 = '1') then 
+					write(linha, to_integer(signed(temperatura_4)),right, 8);
+				elsif(tipoVacina_4 = '0') then
+					write(linha, to_integer(unsigned(temperatura_4)),right, 8);
+				end if;
 				write(linha,espaco);
 				write(linha,porta_1);
 				writeline(refrigerador_4,linha);
@@ -360,9 +390,9 @@ begin
 	escrita_vacina_5_outputs:process
 		variable linha  : line;
 		variable saida : std_logic_vector(2 downto 0);
-		variable temp_decimal : integer;
 		
 	begin
+	wait for (275 ns);
 		wait until (falling_edge(clk));
 		while true loop
 		
@@ -384,9 +414,11 @@ begin
 				write(linha,espaco);
 				write(linha,vacina_5.Lote);
 				write(linha,espaco);
-				
-				temp_decimal := to_integer(unsigned(temperatura_5));
-				write(linha, temp_decimal);
+				if( tipoVacina_5 = '1') then 
+					write(linha, to_integer(signed(temperatura_5)),right, 8);
+				elsif(tipoVacina_5 = '0') then
+					write(linha, to_integer(unsigned(temperatura_5)),right, 8);
+				end if;
 				
 				
 				write(linha,espaco);

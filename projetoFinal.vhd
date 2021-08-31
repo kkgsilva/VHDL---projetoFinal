@@ -32,7 +32,6 @@ begin
 	
 		begin
 				if (vacinas_data_1 = '1') then
-					report"entrou aqui";
 					padrao_temp_1 <= "1111111110110101";	-- revisar complemento de 2/sinal e magnitude
 					padrao_temp_1_max <= padrao_temp_1;
 					padrao_temp_1_min <= padrao_temp_1;
@@ -44,7 +43,7 @@ begin
 	end process;
 
 
-	comparador_1_process: process(padrao_temp_1,padrao_temp_1_max,padrao_temp_1_min, clock)
+	comparador_1_process: process(temp_1,padrao_temp_1_max,padrao_temp_1_min, clock)
 	begin 
 	if (clock='1' and clock'event) then
 		if ((unsigned(temp_1)) = (unsigned(padrao_temp_1)) AND (sensor_1 = '0')) then		-- temperatura ok, porta fechada
@@ -63,11 +62,11 @@ begin
 			led_1 <= x"ff0000";	-- led vermelho
 			mensagem_1 <= "100";
 		
-		elsif ((unsigned(padrao_temp_1)) > (unsigned(temp_1)) AND (unsigned(temp_1)) > (unsigned(padrao_temp_1_min))) then
+		elsif ((unsigned(padrao_temp_1)) < (unsigned(temp_1)) AND (unsigned(temp_1)) < (unsigned(padrao_temp_1_max))) then
 			led_1 <= x"ffff00";	-- led amarelo
 			mensagem_1 <= "101";
 		
-		elsif ((unsigned(padrao_temp_1)) < (unsigned(temp_1)) AND (unsigned(temp_1)) < (unsigned(padrao_temp_1_max))) then
+		elsif ((unsigned(padrao_temp_1)) > (unsigned(temp_1)) AND (unsigned(temp_1)) > (unsigned(padrao_temp_1_min))) then
 			led_1 <= x"ffff00";	-- led amarelo
 			mensagem_1 <= "110";
 		end if;	
@@ -84,7 +83,6 @@ end process comparador_1_process;
 	process(clock,vacinas_data_2)
 		begin
 				if (vacinas_data_2 = '1') then
-					report"entrou aqui";
 					padrao_temp_2 <= "1111111110110101";	-- revisar complemento de 2/sinal e magnitude
 					padrao_temp_2_max <= padrao_temp_2;
 					padrao_temp_2_min <= padrao_temp_2;
@@ -114,12 +112,12 @@ comparador_2_process: process(padrao_temp_2,padrao_temp_2_max,padrao_temp_2_min,
 		elsif ((unsigned(temp_2)) < (unsigned(padrao_temp_2_min))) then			-- temperatura abaixo da faixa permitida
 			led_2 <= x"ff0000";	-- led vermelho
 			mensagem_2 <= "100";
-		
-		elsif ((unsigned(padrao_temp_2)) > (unsigned(temp_2)) AND (unsigned(temp_2)) > (unsigned(padrao_temp_2_min))) then
+			
+		elsif ((unsigned(padrao_temp_2)) < (unsigned(temp_2)) AND (unsigned(temp_2)) < (unsigned(padrao_temp_2_max))) then
 			led_2 <= x"ffff00";	-- led amarelo
 			mensagem_2 <= "101";
 			
-		elsif ((unsigned(padrao_temp_2)) < (unsigned(temp_2)) AND (unsigned(temp_2)) < (unsigned(padrao_temp_2_max))) then
+		elsif ((unsigned(padrao_temp_2)) > (unsigned(temp_2)) AND (unsigned(temp_2)) > (unsigned(padrao_temp_2_min))) then
 			led_2 <= x"ffff00";	-- led amarelo
 			mensagem_2 <= "110";
 		end if;
@@ -135,7 +133,6 @@ end process comparador_2_process;
 	process(clock, vacinas_data_3)
 		begin
 				if (vacinas_data_3 = '1') then
-					report"entrou aqui";
 					padrao_temp_3 <= "1111111110110101";	-- revisar complemento de 2/sinal e magnitude
 					padrao_temp_3_max <= padrao_temp_2;
 					padrao_temp_3_min <= padrao_temp_2;
@@ -167,11 +164,11 @@ comparador_3_process: process(padrao_temp_3,padrao_temp_3_max,padrao_temp_3_min,
 			led_3 <= x"ff0000";	-- led vermelho
 			mensagem_3 <= "100";
 		
-		elsif ((unsigned(padrao_temp_3)) > (unsigned(temp_3)) AND (unsigned(temp_3)) > (unsigned(padrao_temp_3_min))) then
+		elsif ((unsigned(padrao_temp_3)) < (unsigned(temp_3)) AND (unsigned(temp_3)) < (unsigned(padrao_temp_3_max))) then
 			led_3 <= x"ffff00";	-- led amarelo
 			mensagem_3 <= "101";
-		
-		elsif ((unsigned(padrao_temp_3)) < (unsigned(temp_3)) AND (unsigned(temp_3)) < (unsigned(padrao_temp_3_max))) then
+			
+		elsif ((unsigned(padrao_temp_3)) > (unsigned(temp_3)) AND (unsigned(temp_3)) > (unsigned(padrao_temp_3_min))) then
 			led_3 <= x"ffff00";	-- led amarelo
 			mensagem_3 <= "110";
 		end if;
@@ -189,7 +186,6 @@ end process comparador_3_process;
 	
 		begin
 				if (vacinas_data_4 = '1') then
-					report"entrou aqui";
 					padrao_temp_4 <= "1111111110110101";	-- revisar complemento de 4/sinal e magnitude
 					padrao_temp_4_max <= padrao_temp_4;
 					padrao_temp_4_min <= padrao_temp_4;
@@ -221,11 +217,11 @@ comparador_4_process: process(padrao_temp_4,padrao_temp_4_max,padrao_temp_4_min,
 			led_4 <= x"ff0000";	-- led vermelho
 			mensagem_4 <= "100";
 		
-		elsif ((unsigned(padrao_temp_4)) > (unsigned(temp_4)) AND (unsigned(temp_4)) > (unsigned(padrao_temp_4_min))) then
+		elsif ((unsigned(padrao_temp_4)) < (unsigned(temp_4)) AND (unsigned(temp_4)) < (unsigned(padrao_temp_4_max))) then
 			led_4 <= x"ffff00";	-- led amarelo
 			mensagem_4 <= "101";
-		
-		elsif ((unsigned(padrao_temp_4)) < (unsigned(temp_4)) AND (unsigned(temp_4)) < (unsigned(padrao_temp_4_max))) then
+			
+		elsif ((unsigned(padrao_temp_4)) > (unsigned(temp_4)) AND (unsigned(temp_4)) > (unsigned(padrao_temp_4_min))) then
 			led_4 <= x"ffff00";	-- led amarelo
 			mensagem_4 <= "110";
 		end if;
@@ -243,7 +239,6 @@ end process comparador_4_process;
 	
 		begin
 				if (vacinas_data_5 = '1') then
-					report"entrou aqui";
 					padrao_temp_5 <= "1111111110110101";	-- revisar complemento de 5/sinal e magnitude
 					padrao_temp_5_max <= padrao_temp_5;
 					padrao_temp_5_min <= padrao_temp_5;
@@ -275,11 +270,11 @@ comparador_5_process: process(padrao_temp_5,padrao_temp_5_max,padrao_temp_5_min,
 			led_5 <= x"ff0000";	-- led vermelho
 			mensagem_5 <= "100";
 		
-		elsif ((unsigned(padrao_temp_5)) > (unsigned(temp_5)) AND (unsigned(temp_5)) > (unsigned(padrao_temp_5_min))) then
+		elsif ((unsigned(padrao_temp_5)) < (unsigned(temp_5)) AND (unsigned(temp_5)) < (unsigned(padrao_temp_5_max))) then
 			led_5 <= x"ffff00";	-- led amarelo
 			mensagem_5 <= "101";
-		
-		elsif ((unsigned(padrao_temp_5)) < (unsigned(temp_5)) AND (unsigned(temp_5)) < (unsigned(padrao_temp_5_max))) then
+			
+		elsif ((unsigned(padrao_temp_5)) > (unsigned(temp_5)) AND (unsigned(temp_5)) > (unsigned(padrao_temp_5_min))) then
 			led_5 <= x"ffff00";	-- led amarelo
 			mensagem_5 <= "110";
 		end if;

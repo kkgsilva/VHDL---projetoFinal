@@ -124,3 +124,14 @@ simulation/modelsim/projetoFinal_run_msim_rtl_vhdl.do
 *.hsd
 db/projetoFinal.analyze_file.qmsg
 projetoFinal.qws
+*.cdb
+*.rdb
+*.rvd
+db/projetoFinal.rpp.qmsg
+*.flock
+*.hdb
+*.qmsg
+*.hsd
+*.bpm
+*.qmsg
+db/projetoFinal.stingray_io_sim_cache.45um_tt_1200mv_85c_slow.hsd
