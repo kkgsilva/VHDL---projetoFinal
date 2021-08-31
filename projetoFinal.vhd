@@ -7,6 +7,7 @@ use ieee.numeric_std.all;
 
 entity projetoFinal is
     port (
+		vacinas_data: in std_logic;
 		clock: in std_logic;
 		temp_1: in std_logic_vector(15 downto 0);
 		sensor_1: in std_logic;
@@ -18,12 +19,12 @@ end projetoFinal;
 
 architecture gestao_vacinas of projetoFinal is
 	-- declarações signal
-	signal padrao_temp_1 : std_logic_vector(15 downto 0);
-	signal  padrao_temp_1_max : std_logic_vector(15 downto 0);
-	signal  padrao_temp_1_min : std_logic_vector(15 downto 0);
+signal padrao_temp_1 : std_logic_vector(15 downto 0);
+signal  padrao_temp_1_max : std_logic_vector(15 downto 0);	
+signal  padrao_temp_1_min : std_logic_vector(15 downto 0);
 	
 begin	
-	process(clock, vacinas_data)
+	process(vacinas_data)
 	
 		begin
 				if (vacinas_data = '1') then
@@ -37,7 +38,7 @@ begin
 					padrao_temp_1_min <= "0000000000000010";
 				end if;
 	end process;
-	
+
 comparadores_process: process(padrao_temp_1,padrao_temp_1_max,padrao_temp_1_min, clock)
 	begin 
 	if (clock='1' and clock'event) then
