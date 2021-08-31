@@ -60,13 +60,13 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	signal Vacina_1, Vacina_2, Vacina_3, Vacina_4, Vacina_5 : vector;
 	
 --declara as mensagens de erro como constantes 
-	constant espaco: string := "  ";
-	constant mensagem1: string := "Refrigerador funcionando";
-	constant msg_porta_alerta: string :="ALERTA: Porta do refrigerador aberta!";
-	constant msg_temp_alta: string :="VACINAS DESCARTADAS: Temperatura acima da permitida!";
-	constant msg_temp_baixa: string :="VACINAS DESCARTADAS: Temperatura abaixo da permitida!";
-	constant msg_temp_subindo: string :="ALERTA: Temperatura a temperatura esta subindo!";
-	constant msg_temp_caindo: string := "ALERTA: Temperatura a temperatura esta caindo!";	
+	constant espaco: string           := "  ";
+	constant mensagem1: string        := "                Refrigerador funcionando                ";
+	constant msg_porta_alerta: string :="          ALERTA: Porta do refrigerador aberta!         ";
+	constant msg_temp_alta: string    :="  VACINAS DESCARTADAS: Temperatura acima da permitida!  ";
+	constant msg_temp_baixa: string   :="  VACINAS DESCARTADAS: Temperatura abaixo da permitida! ";
+	constant msg_temp_subindo: string :="     ALERTA: Temperatura a temperatura esta subindo!     ";
+	constant msg_temp_caindo: string  :="      ALERTA: Temperatura a temperatura esta caindo!     ";	
 	
 		------------------------------ PORT MAP ---------------------------------------
 begin

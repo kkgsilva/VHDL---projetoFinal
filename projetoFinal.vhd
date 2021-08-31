@@ -63,11 +63,11 @@ begin
 			led_1 <= x"ff0000";	-- led vermelho
 			mensagem_1 <= "100";
 		
-		elsif ((unsigned(padrao_temp_1)) < (unsigned(temp_1)) AND (unsigned(temp_1)) < (unsigned(padrao_temp_1_max))) then
+		elsif ((unsigned(padrao_temp_1)) > (unsigned(temp_1)) AND (unsigned(temp_1)) > (unsigned(padrao_temp_1_min))) then
 			led_1 <= x"ffff00";	-- led amarelo
 			mensagem_1 <= "101";
 		
-		elsif ((unsigned(padrao_temp_1)) > (unsigned(temp_1)) AND (unsigned(temp_1)) > (unsigned(padrao_temp_1_min))) then
+		elsif ((unsigned(padrao_temp_1)) < (unsigned(temp_1)) AND (unsigned(temp_1)) < (unsigned(padrao_temp_1_max))) then
 			led_1 <= x"ffff00";	-- led amarelo
 			mensagem_1 <= "110";
 		end if;	
@@ -115,11 +115,11 @@ comparador_2_process: process(padrao_temp_2,padrao_temp_2_max,padrao_temp_2_min,
 			led_2 <= x"ff0000";	-- led vermelho
 			mensagem_2 <= "100";
 		
-		elsif ((unsigned(padrao_temp_2)) < (unsigned(temp_2)) AND (unsigned(temp_2)) < (unsigned(padrao_temp_2_max))) then
+		elsif ((unsigned(padrao_temp_2)) > (unsigned(temp_2)) AND (unsigned(temp_2)) > (unsigned(padrao_temp_2_min))) then
 			led_2 <= x"ffff00";	-- led amarelo
 			mensagem_2 <= "101";
-		
-		elsif ((unsigned(padrao_temp_2)) > (unsigned(temp_2)) AND (unsigned(temp_2)) > (unsigned(padrao_temp_2_min))) then
+			
+		elsif ((unsigned(padrao_temp_2)) < (unsigned(temp_2)) AND (unsigned(temp_2)) < (unsigned(padrao_temp_2_max))) then
 			led_2 <= x"ffff00";	-- led amarelo
 			mensagem_2 <= "110";
 		end if;
@@ -167,11 +167,11 @@ comparador_3_process: process(padrao_temp_3,padrao_temp_3_max,padrao_temp_3_min,
 			led_3 <= x"ff0000";	-- led vermelho
 			mensagem_3 <= "100";
 		
-		elsif ((unsigned(padrao_temp_3)) < (unsigned(temp_3)) AND (unsigned(temp_3)) < (unsigned(padrao_temp_3_max))) then
+		elsif ((unsigned(padrao_temp_3)) > (unsigned(temp_3)) AND (unsigned(temp_3)) > (unsigned(padrao_temp_3_min))) then
 			led_3 <= x"ffff00";	-- led amarelo
 			mensagem_3 <= "101";
 		
-		elsif ((unsigned(padrao_temp_3)) > (unsigned(temp_3)) AND (unsigned(temp_3)) > (unsigned(padrao_temp_3_min))) then
+		elsif ((unsigned(padrao_temp_3)) < (unsigned(temp_3)) AND (unsigned(temp_3)) < (unsigned(padrao_temp_3_max))) then
 			led_3 <= x"ffff00";	-- led amarelo
 			mensagem_3 <= "110";
 		end if;
@@ -221,11 +221,11 @@ comparador_4_process: process(padrao_temp_4,padrao_temp_4_max,padrao_temp_4_min,
 			led_4 <= x"ff0000";	-- led vermelho
 			mensagem_4 <= "100";
 		
-		elsif ((unsigned(padrao_temp_4)) < (unsigned(temp_4)) AND (unsigned(temp_4)) < (unsigned(padrao_temp_4_max))) then
+		elsif ((unsigned(padrao_temp_4)) > (unsigned(temp_4)) AND (unsigned(temp_4)) > (unsigned(padrao_temp_4_min))) then
 			led_4 <= x"ffff00";	-- led amarelo
 			mensagem_4 <= "101";
 		
-		elsif ((unsigned(padrao_temp_4)) > (unsigned(temp_4)) AND (unsigned(temp_4)) > (unsigned(padrao_temp_4_min))) then
+		elsif ((unsigned(padrao_temp_4)) < (unsigned(temp_4)) AND (unsigned(temp_4)) < (unsigned(padrao_temp_4_max))) then
 			led_4 <= x"ffff00";	-- led amarelo
 			mensagem_4 <= "110";
 		end if;
@@ -275,11 +275,11 @@ comparador_5_process: process(padrao_temp_5,padrao_temp_5_max,padrao_temp_5_min,
 			led_5 <= x"ff0000";	-- led vermelho
 			mensagem_5 <= "100";
 		
-		elsif ((unsigned(padrao_temp_5)) < (unsigned(temp_5)) AND (unsigned(temp_5)) < (unsigned(padrao_temp_5_max))) then
+		elsif ((unsigned(padrao_temp_5)) > (unsigned(temp_5)) AND (unsigned(temp_5)) > (unsigned(padrao_temp_5_min))) then
 			led_5 <= x"ffff00";	-- led amarelo
 			mensagem_5 <= "101";
 		
-		elsif ((unsigned(padrao_temp_5)) > (unsigned(temp_5)) AND (unsigned(temp_5)) > (unsigned(padrao_temp_5_min))) then
+		elsif ((unsigned(padrao_temp_5)) < (unsigned(temp_5)) AND (unsigned(temp_5)) < (unsigned(padrao_temp_5_max))) then
 			led_5 <= x"ffff00";	-- led amarelo
 			mensagem_5 <= "110";
 		end if;
