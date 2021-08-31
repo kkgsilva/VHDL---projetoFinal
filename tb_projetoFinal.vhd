@@ -11,26 +11,26 @@ end tb_projetoFinal;
 architecture tb_gestao_vacinas of tb_projetoFinal is
 	component projetoFinal port(
 		clock: in std_logic;
-		temp_1: in std_logic_vector(15 downto 0);
-		sensor_1: in std_logic;
-		led_1: out std_logic_vector(23 downto 0);
-		mensagem: out std_logic_vector(2 downto 0);
-		vacinas_data: in std_logic
+		temp_1, temp_2, temp_3, temp_4, temp_5: in std_logic_vector(15 downto 0);
+		sensor_1,sensor_2, sensor_3, sensor_4, sensor_5: in std_logic;
+		led_1, led_2, led_3, led_4, led_5: out std_logic_vector(23 downto 0); -- saida rgb, verificar logica
+		mensagem_1, mensagem_2, mensagem_3, mensagem_4, mensagem_5 : out std_logic_vector(2 downto 0);
+		vacinas_data_1, vacinas_data_2, vacinas_data_3, vacinas_data_4, vacinas_data_5: in std_logic
 	);
 	end component;
 	
-   -- declaraÃ§oes de  signal ine out
-	signal tipoVacina : std_logic;
-	signal porta_1 : std_logic:= '0';
-	signal temperatura_1 : std_logic_vector(15 downto 0) := "1111111110110101";
-	signal alerta_1 : std_logic_vector(23 downto 0);
-	signal notificacao: std_logic_vector(2 downto 0);
+   -- declaraÃ§oes de  signal in e out
+	signal tipoVacina_1, tipoVacina_2, tipoVacina_3, tipoVacina_4, tipoVacina_5  : std_logic;
+	signal porta_1, porta_2, porta_3, porta_4, porta_5 : std_logic:= '0';
+	signal temperatura_1, temperatura_2, temperatura_3, temperatura_4, temperatura_5 : std_logic_vector(15 downto 0) := "1111111110110101";
+	signal alerta_1, alerta_2, alerta_3, alerta_4, alerta_5: std_logic_vector(23 downto 0);
+	signal notificacao_1, notificacao_2, notificacao_3, notificacao_4, notificacao_5: std_logic_vector(2 downto 0);
 	
 	--SINAIS DE LEITURA E ESCRITA
 	signal read_data_in    : std_logic:='0';
    signal flag_write      : std_logic:='0';   
 	
-	-- declaraÃ§oes constant for clock
+	-- Declaracao constant for clock
 	signal clk: std_logic;
 	constant PERIOD     : time := 30 ns;
    constant DUTY_CYCLE : real := 0.5;
@@ -38,32 +38,74 @@ architecture tb_gestao_vacinas of tb_projetoFinal is
 	constant max_value      : natural := 15;
 	constant mim_value		: natural := 0;
 
-	-- declaracoes file
+-- declaracoes file
 	file vacinas			: text open read_mode is "vacina.txt";
 	file refrigerador_1	: text open write_mode is "refrigerador_1.txt";
+	file refrigerador_2	: text open write_mode is "refrigerador_2.txt";
+	file refrigerador_3	: text open write_mode is "refrigerador_3.txt";
+	file refrigerador_4	: text open write_mode is "refrigerador_4.txt";
+	file refrigerador_5	: text open write_mode is "refrigerador_5.txt";
+
+-- Tipos De dados
+	type vect is array (1 to 5) of std_logic;
+	signal TipoVacina: vect ; 
+	
+	type vector is record
+		Nome: string(1 to 6);
+		Lote: string(4 downto 1);
+	end record;
+	
 	
 	--declaracoes de sinal utilizados entre process
-	signal  loteVacina : string(4 downto 1);
-	signal numeroRefrigerador : unsigned(1 downto 1);
+	signal Vacina_1, Vacina_2, Vacina_3, Vacina_4, Vacina_5 : vector;
+	
+--declara as mensagens de erro como constantes 
+	constant espaco: string := "  ";
+	constant mensagem1: string := "Refrigerador funcionando";
+	constant msg_porta_alerta: string :="ALERTA: Porta do refrigerador aberta!";
+	constant msg_temp_alta: string :="VACINAS DESCARTADAS: Temperatura acima da permitida!";
+	constant msg_temp_baixa: string :="VACINAS DESCARTADAS: Temperatura abaixo da permitida!";
+	constant msg_temp_subindo: string :="ALERTA: Temperatura a temperatura esta subindo!";
+	constant msg_temp_caindo: string := "ALERTA: Temperatura a temperatura esta caindo!";	
 	
 		------------------------------ PORT MAP ---------------------------------------
 begin
 	DUT: projetoFinal
     port map(clock     => clk,
 				 temp_1    => temperatura_1,
+				 temp_2		=> temperatura_2,
+				 temp_3		=> temperatura_3,
+				 temp_4		=> temperatura_4,
+				 temp_5		=> temperatura_5,
 				 led_1    => alerta_1,
-             sensor_1  => porta_1,
-				 mensagem => notificacao,
-				 vacinas_data => tipoVacina );	
+				 led_2    => alerta_2,
+				 led_3    => alerta_3,
+				 led_4    => alerta_4,
+				 led_5    => alerta_5,
+				 sensor_1  => porta_1,
+				 sensor_2  => porta_2,
+				 sensor_3  => porta_3,
+				 sensor_4  => porta_4,
+				 sensor_5  => porta_5,
+				 mensagem_1 => notificacao_1,
+				 mensagem_2 => notificacao_2,
+				 mensagem_3 => notificacao_3,
+				 mensagem_4 => notificacao_4,
+				 mensagem_5 => notificacao_5,
+				 vacinas_data_1 => tipoVacina_1,
+				 vacinas_data_2 => tipoVacina_2,
+				 vacinas_data_3 => tipoVacina_3,
+				 vacinas_data_4 => tipoVacina_4,
+				 vacinas_data_5 => tipoVacina_5
+			);	
 				 
-		--temperatura_1 <= "0000000000000100", "0000000000000010" after 30s, "0000000000000011" after 30s, "0000000000000111" after 30s, "0000000000000010" after 30s, "0000000000000010" after 50s, "0000000000000001" after 20s;
 
-		
-		
+	temperatura_1 <= "1111111110110101", "1111111110110110" after 320 ns, "1111111110110101" after 380 ns, "1111111110110100" after 430 ns, "1111111110110101" after 470 ns;
+	porta_1 <= '0', '1'  after 300 ns, '0' after 370 ns, '1' after 490 ns, '0' after 510 ns;
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar o sinal de clock 
 ------------------------------------------------------------------------------------		
-        PROCESS    -- clock process for clock
+	PROCESS 
         BEGIN
             WAIT for OFFSET;
             CLOCK_LOOP : LOOP
@@ -73,19 +115,15 @@ begin
                 WAIT FOR (PERIOD * DUTY_CYCLE);
             END LOOP CLOCK_LOOP;
         END PROCESS;
-		  
-		  
 ------------------------------------------------------------------------------------
 ----------------- processo para leer os dados do arquivo vacina.txt
 ------------------------------------------------------------------------------------
-
-leitura_vacinas_process: process
+	leitura_vacinas_process: process
 	variable linha : line;
 	variable nomeVacina : string(6 downto 1);
 	variable lote : string(4 downto 1);
 	variable refri : integer;
 	variable espaco 	  : character;
-	
 	
 	begin
 		wait until(falling_edge(clk));
@@ -95,26 +133,42 @@ leitura_vacinas_process: process
 				read(linha,nomeVacina);		
 				read(linha, espaco);
 				read(linha,lote);
-				loteVacina <= lote;
 				read(linha, espaco);
 				read(linha, refri);
-				numeroRefrigerador <=  to_unsigned(refri, numeroRefrigerador'length);
 				
-		   report "A vacina lida - " & nomeVacina;
-			report "O lote -" & loteVacina;
-			report "No refrigerador - " & integer'image(to_integer(numeroRefrigerador));
 				if(nomeVacina = "Pfizer") then
-					tipoVacina <= '1';
+					tipoVacina(refri) <= '1';
 				else 
-					tipoVacina <= '0';
+					tipoVacina(refri) <= '0';
 				end if;	
-			report "Vacina 1  - " & std_logic'image(tipoVacina);	
+				
+				if(refri = 1) then
+					vacina_1.Nome <= nomeVacina;
+					vacina_1.Lote <= lote;
+				elsif(refri = 2) then
+					vacina_2.Nome <= nomeVacina;
+					vacina_2.Lote <= lote;
+				elsif(refri = 3) then
+					vacina_3.Nome <= nomeVacina;
+					vacina_3.Lote <= lote;
+				elsif(refri = 4) then
+					vacina_4.Nome <= nomeVacina;
+					vacina_4.Lote <= lote;
+				elsif(refri = 5) then
+					vacina_5.Nome <= nomeVacina;
+					vacina_5.Lote <= lote;	
+				end if;
+				
 			end if;
 			wait for PERIOD;
 		end loop;
+		tipoVacina_1 <= tipoVacina(1);
+		tipoVacina_2 <= tipoVacina(2);
+		tipoVacina_3 <= tipoVacina(3);
+		tipoVacina_4 <= tipoVacina(4);
+		tipoVacina_5 <= tipoVacina(5);		
 		wait;
 	end process leitura_vacinas_process;	
-	
 	
 ------------------------------------------------------------------------------------
 ----------------- processo para gerar os estimulos de entrada
@@ -133,7 +187,7 @@ leitura_vacinas_process: process
 ------------------------------------------------------------------------------------
 ------ processo para gerar os estimulos de escrita do arquivo de saida
 ------------------------------------------------------------------------------------ 
- escreve_outputs : PROCESS
+	escreve_outputs : PROCESS
     BEGIN
          WAIT FOR (OFFSET + 4*PERIOD);
              flag_write <= '1';
@@ -145,28 +199,18 @@ leitura_vacinas_process: process
     END PROCESS escreve_outputs;   
 	
 -- ------------------------------------------------------------------------------------
--- ------ processo para escriber os dados de saida no arquivo relatorio.txt
+-- ------ processo para escriber os dados de saida no arquivo relatorio 1.txt
 -- ------------------------------------------------------------------------------------  
-
-	escrita_vacina_outputs:process
+	escrita_vacina_1_outputs:process
 		variable linha  : line;
 		variable saida : std_logic_vector(2 downto 0);
-		constant espaco: string := "  ";
-		constant mensagem1: string := "Refrigerador funcionando";
-		constant msg_porta_alerta: string :="ALERTA: Porta do refrigerador aberta!";
-		constant msg_temp_alta: string :="VACINAS DESCARTADAS: Temperatura acima da permitida!";
-		constant msg_temp_baixa: string :="VACINAS DESCARTADAS: Temperatura abaixo da permitida!";
-		constant msg_temp_subindo: string :="ALERTA: Temperatura a temperatura esta subindo!";
-		constant msg_temp_caindo: string := "ALERTA: Temperatura a temperatura esta caindo!";
-
+		
 	begin
+	wait for (85 ns);
 		wait until (falling_edge(clk));
 		while true loop
 		
-			write(linha,to_integer(numeroRefrigerador));
-			write(linha,espaco);
-			
-			saida := notificacao;
+			saida := notificacao_1;
 			if(saida = "001") then
 				write(linha, mensagem1);
 			elsif(saida = "010") then
@@ -182,7 +226,7 @@ leitura_vacinas_process: process
 			end if;
 			
 				write(linha,espaco);
-				write(linha,loteVacina);
+				write(linha,vacina_1.Lote);
 				write(linha,espaco);
 				write(linha, temperatura_1);
 				write(linha,espaco);
@@ -191,6 +235,167 @@ leitura_vacinas_process: process
 				
 		wait for PERIOD;
 		end loop; 
-	end process escrita_vacina_outputs; 
+	end process escrita_vacina_1_outputs; 
 	
+-- ------------------------------------------------------------------------------------
+-- ------ processo para escriber os dados de saida no arquivo relatorio 2.txt
+-- ------------------------------------------------------------------------------------  
+	escrita_vacina_2_outputs:process
+		variable linha  : line;
+		variable saida : std_logic_vector(2 downto 0);
+		
+	begin
+	wait for (85 ns);
+		wait until (falling_edge(clk));
+		while true loop
+		
+			saida := notificacao_2;
+			if(saida = "001") then
+				write(linha, mensagem1);
+			elsif(saida = "010") then
+				write(linha, msg_porta_alerta);
+			elsif(saida = "011") then
+				write(linha, msg_temp_alta);
+			elsif(saida = "100") then
+				write(linha, msg_temp_baixa);
+			elsif(saida = "101") then
+				write(linha, msg_temp_subindo);
+			elsif(saida = "110") then
+				write(linha, msg_temp_caindo);
+			end if;
+			
+				write(linha,espaco);
+				write(linha,vacina_2.Lote);
+				write(linha,espaco);
+				write(linha, temperatura_2);
+				write(linha,espaco);
+				write(linha,porta_2);
+				writeline(refrigerador_2,linha);
+				
+		wait for PERIOD;
+		end loop; 
+	end process escrita_vacina_2_outputs;
+	
+	
+	
+-- ------------------------------------------------------------------------------------
+-- ------ processo para escriber os dados de saida no arquivo relatorio 3.txt
+-- ------------------------------------------------------------------------------------  
+	escrita_vacina_3_outputs:process
+		variable linha  : line;
+		variable saida : std_logic_vector(2 downto 0);
+		
+	begin
+		wait until (falling_edge(clk));
+		while true loop
+		
+			saida := notificacao_3;
+			if(saida = "001") then
+				write(linha, mensagem1);
+			elsif(saida = "010") then
+				write(linha, msg_porta_alerta);
+			elsif(saida = "011") then
+				write(linha, msg_temp_alta);
+			elsif(saida = "100") then
+				write(linha, msg_temp_baixa);
+			elsif(saida = "101") then
+				write(linha, msg_temp_subindo);
+			elsif(saida = "110") then
+				write(linha, msg_temp_caindo);
+			end if;
+			
+				write(linha,espaco);
+				write(linha,vacina_3.Lote);
+				write(linha,espaco);
+				write(linha, temperatura_3);
+				write(linha,espaco);
+				write(linha,porta_1);
+				writeline(refrigerador_3,linha);
+				
+		wait for PERIOD;
+		end loop; 
+	end process escrita_vacina_3_outputs; 
+	
+-- ------------------------------------------------------------------------------------
+-- ------ processo para escriber os dados de saida no arquivo relatorio 4.txt
+-- ------------------------------------------------------------------------------------  
+	escrita_vacina_4_outputs:process
+		variable linha  : line;
+		variable saida : std_logic_vector(2 downto 0);
+		
+	begin
+		wait until (falling_edge(clk));
+		while true loop
+		
+			saida := notificacao_4;
+			if(saida = "001") then
+				write(linha, mensagem1);
+			elsif(saida = "010") then
+				write(linha, msg_porta_alerta);
+			elsif(saida = "011") then
+				write(linha, msg_temp_alta);
+			elsif(saida = "100") then
+				write(linha, msg_temp_baixa);
+			elsif(saida = "101") then
+				write(linha, msg_temp_subindo);
+			elsif(saida = "110") then
+				write(linha, msg_temp_caindo);
+			end if;
+			
+				write(linha,espaco);
+				write(linha,vacina_4.Lote);
+				write(linha,espaco);
+				write(linha, temperatura_4);
+				write(linha,espaco);
+				write(linha,porta_1);
+				writeline(refrigerador_4,linha);
+				
+		wait for PERIOD;
+		end loop; 
+	end process escrita_vacina_4_outputs; 
+	
+-- ------------------------------------------------------------------------------------
+-- ------ processo para escriber os dados de saida no arquivo relatorio 5.txt
+-- ------------------------------------------------------------------------------------  
+	escrita_vacina_5_outputs:process
+		variable linha  : line;
+		variable saida : std_logic_vector(2 downto 0);
+		variable temp_decimal : integer;
+		
+	begin
+		wait until (falling_edge(clk));
+		while true loop
+		
+			saida := notificacao_5;
+			if(saida = "001") then
+				write(linha, mensagem1);
+			elsif(saida = "010") then
+				write(linha, msg_porta_alerta);
+			elsif(saida = "011") then
+				write(linha, msg_temp_alta);
+			elsif(saida = "100") then
+				write(linha, msg_temp_baixa);
+			elsif(saida = "101") then
+				write(linha, msg_temp_subindo);
+			elsif(saida = "110") then
+				write(linha, msg_temp_caindo);
+			end if;
+			
+				write(linha,espaco);
+				write(linha,vacina_5.Lote);
+				write(linha,espaco);
+				
+				temp_decimal := to_integer(unsigned(temperatura_5));
+				write(linha, temp_decimal);
+				
+				
+				write(linha,espaco);
+				write(linha,porta_5);
+				writeline(refrigerador_5,linha);
+				
+		wait for PERIOD;
+		end loop; 
+	end process escrita_vacina_5_outputs; 
+	
+
 end tb_gestao_vacinas;
