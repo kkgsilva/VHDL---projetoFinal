@@ -7,7 +7,6 @@ use ieee.numeric_std.all;
 
 entity projetoFinal is
     port (
-		vacinas_data: in std_logic;
 		clock: in std_logic;
 		temp_1: in std_logic_vector(15 downto 0);
 		sensor_1: in std_logic;
@@ -24,7 +23,7 @@ signal  padrao_temp_1_max : std_logic_vector(15 downto 0);
 signal  padrao_temp_1_min : std_logic_vector(15 downto 0);
 	
 begin	
-	process(vacinas_data)
+	process(clock, vacinas_data)
 	
 		begin
 				if (vacinas_data = '1') then
