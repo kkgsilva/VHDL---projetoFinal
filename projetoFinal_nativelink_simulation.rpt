@@ -1,13 +1,23 @@
 Info: Start Nativelink Simulation process
-Error: ERROR: Project does not exist or has illegal name characters: projetoFinal. Specify a legal project name.
-ERROR: Project does not exist or has illegal name characters: projetoFinal. Specify a legal project name.
-Error: NativeLink simulation flow was NOT successful
+Info: NativeLink has detected VHDL design -- VHDL simulation models will be used
 
+========= EDA Simulation Settings =====================
 
+Sim Mode              :  RTL
+Family                :  cycloneivgx
+Quartus root          :  c:/altera/13.0sp1/quartus/bin64/
+Quartus sim root      :  c:/altera/13.0sp1/quartus/eda/sim_lib
+Simulation Tool       :  modelsim-altera
+Simulation Language   :  vhdl
+Version               :  93
+Simulation Mode       :  GUI
+Sim Output File       :  
+Sim SDF file          :  
+Sim dir               :  simulation\modelsim
 
-================The following additional information is provided to help identify the cause of error while running nativelink scripts=================
-Nativelink TCL script failed with errorCode:  NONE
-Nativelink TCL script failed with errorInfo:  ERROR: Project does not exist or has illegal name characters: projetoFinal. Specify a legal project name.
+=======================================================
 
-    while executing
-"project_open $project -force -cmp $action_pt"
+Info: Starting NativeLink simulation with ModelSim-Altera software
+Sourced NativeLink script c:/altera/13.0sp1/quartus/common/tcl/internal/nativelink/modelsim.tcl
+Warning: File projetoFinal_run_msim_rtl_vhdl.do already exists - backing up current file as projetoFinal_run_msim_rtl_vhdl.do.bak2
+Info: Spawning ModelSim-Altera Simulation software 

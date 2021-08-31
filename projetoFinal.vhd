@@ -11,7 +11,7 @@ entity projetoFinal is
 		temp_1: in std_logic_vector(15 downto 0);
 		sensor_1: in std_logic;
 		led_1: out std_logic_vector(23 downto 0); -- saida rgb, verificar logica
-		mensagem: out integer;
+		mensagem: out std_logic_vector(2 downto 0);
 		vacinas_data: in std_logic
 	 );
 end projetoFinal;
@@ -38,36 +38,33 @@ begin
 				end if;
 	end process;
 	
-	
-comparadores_process: process(padrao_temp_1,padrao_temp_1_max,padrao_temp_1_min)
+comparadores_process: process(padrao_temp_1,padrao_temp_1_max,padrao_temp_1_min, clock)
 	begin 
 	if (clock='1' and clock'event) then
-	
 		if ((unsigned(temp_1)) = (unsigned(padrao_temp_1)) AND (sensor_1 = '0')) then		-- temperatura ok, porta fechada
 				led_1 <= x"00ff00";	-- led verde				
-				mensagem <= 1;
+				mensagem <= "001";
 				
 		elsif ((unsigned(temp_1)) = (unsigned(padrao_temp_1)) AND (sensor_1 = '1')) then		-- temperatura ok, porta aberta
 				led_1 <= x"ffff00";	-- led amarelo
-				mensagem <= 2;
+				mensagem <= "010";
 			
 		elsif ((unsigned(temp_1)) > (unsigned(padrao_temp_1_max))) then			-- temperatura acima da faixa permitida
 			led_1 <= x"ff0000";	-- led vermelho
-			mensagem <= 3;
+			mensagem <= "011";
 		
 		elsif ((unsigned(temp_1)) < (unsigned(padrao_temp_1_min))) then			-- temperatura abaixo da faixa permitida
 			led_1 <= x"ff0000";	-- led vermelho
-			mensagem <= 4;
+			mensagem <= "100";
 		
 		elsif ((unsigned(padrao_temp_1)) < (unsigned(temp_1)) AND (unsigned(temp_1)) < (unsigned(padrao_temp_1_max))) then
 			led_1 <= x"ffff00";	-- led amarelo
-			mensagem <= 5;
+			mensagem <= "101";
 		
 		elsif ((unsigned(padrao_temp_1)) > (unsigned(temp_1)) AND (unsigned(temp_1)) > (unsigned(padrao_temp_1_min))) then
 			led_1 <= x"ffff00";	-- led amarelo
-			mensagem <= 6;
-		end if;
-		
+			mensagem <= "110";
+		end if;	
 	end if;
 end process comparadores_process;	
 
