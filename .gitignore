@@ -121,3 +121,6 @@ vsim.wlf
 *.rpt
 simulation/modelsim/projetoFinal_run_msim_rtl_vhdl.do
 simulation/modelsim/projetoFinal_run_msim_rtl_vhdl.do
+*.hsd
+db/projetoFinal.analyze_file.qmsg
+projetoFinal.qws
